@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <name>Runs Continue Past Mother in Greed Mode</name>
+    <directory>runs continue past mother in greed mode</directory>
+    <id>2949032231</id>
+    <description>This mod is based on [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2493403665]Runs Continue Past Mother[/url]. It allows you to continue on to Sheol or the Cathedral after fighting Mother in Greed Mode.
+
+This mod requires:
+[list]
+    [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2925565414]Alt Path + Mother in Greed Mode![/url]
+[/list]
+
+It also supports:
+[list]
+    [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2813909722]The Cathedral in Greed Mode![/url]
+[/list]</description>
+    <version>1.1</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Tweaks"/>
+</metadata>
