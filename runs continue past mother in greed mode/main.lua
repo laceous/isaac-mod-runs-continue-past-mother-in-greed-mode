@@ -60,7 +60,7 @@ end
 function mod:onPlayerUpdate(player)
   if game:IsGreedMode() and not mod:isAnyChallenge() then
     if mod:isMother() then
-      if mod.cath == nil then
+      if game:IsPaused() and mod.cath == nil then
         local room = game:GetRoom()
         local sprite = player:GetSprite()
         local playerIdx = room:GetGridIndex(player.Position)
