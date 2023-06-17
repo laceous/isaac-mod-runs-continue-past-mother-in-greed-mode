@@ -36,6 +36,8 @@ end
 function mod:onPickupInit(pickup)
   if game:IsGreedMode() and not mod:isAnyChallenge() and mod:isMother() then
     local room = game:GetRoom()
+    local trapdoorIdx = 36
+    local heavenDoorIdx = 38
     
     for _, v in ipairs(Isaac.FindByType(EntityType.ENTITY_MOTHER, 0, -1, false, false)) do
       -- v.Color on the head also affects the hands
@@ -47,12 +49,17 @@ function mod:onPickupInit(pickup)
       end
     end
     
-    Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, room:GetGridPosition(36), true)
+    local trapdoor = Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, room:GetGridPosition(trapdoorIdx), true)
+    if trapdoor:GetType() ~= GridEntityType.GRID_TRAPDOOR then
+      room:RemoveGridEntity(trapdoorIdx, 0, false)
+      room:Update()
+      Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, room:GetGridPosition(trapdoorIdx), true)
+    end
     
     if gcath then
-      Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HEAVEN_LIGHT_DOOR, 0, room:GetGridPosition(38), Vector.Zero, nil)
+      Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HEAVEN_LIGHT_DOOR, 0, room:GetGridPosition(heavenDoorIdx), Vector.Zero, nil)
     else
-      Isaac.GridSpawn(GridEntityType.GRID_SPIDERWEB, 0, room:GetGridPosition(38), true)
+      Isaac.GridSpawn(GridEntityType.GRID_SPIDERWEB, 0, room:GetGridPosition(heavenDoorIdx), true)
     end
   end
 end
