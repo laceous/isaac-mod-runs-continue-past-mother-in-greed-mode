@@ -10,13 +10,16 @@ function mod:onGameExit()
   mod.timer = 0
 end
 
-function mod:onNewLevel()
+function mod:onNewRoom()
   if game:IsGreedMode() and not mod:isAnyChallenge() then
     local level = game:GetLevel()
+    local room = level:GetCurrentRoom()
     local stage = level:GetStage()
     local stageType = level:GetStageType()
     
-    if stage == LevelStage.STAGE5_GREED and stageType == StageType.STAGETYPE_ORIGINAL then
+    if level:GetCurrentRoomIndex() == level:GetStartingRoomIndex() and room:IsFirstVisit() and mod:getCurrentDimension() == 0 and
+       stage == LevelStage.STAGE5_GREED and stageType == StageType.STAGETYPE_ORIGINAL
+    then
       if mod.cath == false then -- sheol
         mod.cath = nil
         -- corpse seed is re-used when going from corpse to sheol/cathedral
@@ -29,6 +32,8 @@ function mod:onNewLevel()
         mod.timer = 4
       end
     end
+    
+    mod.cath = nil
   end
 end
 
@@ -107,6 +112,27 @@ function mod:onPlayerUpdate(player)
   end
 end
 
+function mod:getCurrentDimension()
+  local level = game:GetLevel()
+  return mod:getDimension(level:GetCurrentRoomDesc())
+end
+
+function mod:getDimension(roomDesc)
+  local level = game:GetLevel()
+  local ptrHash = GetPtrHash(roomDesc)
+  
+  -- 0: main dimension
+  -- 1: secondary dimension, used by downpour mirror dimension and mines escape sequence
+  -- 2: death certificate dimension
+  for i = 0, 2 do
+    if ptrHash == GetPtrHash(level:GetRoomByIdx(roomDesc.SafeGridIndex, i)) then
+      return i
+    end
+  end
+  
+  return -1
+end
+
 -- otherwise you still see the boss bar for a second when you go to sheol/cathedral which looks weird
 function mod:doEnhancedBossBarsOverride()
   if not HPBars then
@@ -148,7 +174,7 @@ function mod:isAnyChallenge()
 end
 
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, mod.onGameExit)
-mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, mod.onNewLevel)
+mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.onNewRoom)
 mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, mod.onPickupInit, PickupVariant.PICKUP_BIGCHEST)
 mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, mod.onPlayerUpdate)
 
