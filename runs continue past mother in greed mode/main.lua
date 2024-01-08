@@ -56,8 +56,7 @@ function mod:onPickupInit(pickup)
     
     local trapdoor = Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, room:GetGridPosition(trapdoorIdx), true)
     if trapdoor:GetType() ~= GridEntityType.GRID_TRAPDOOR then
-      room:RemoveGridEntity(trapdoorIdx, 0, false)
-      room:Update()
+      mod:removeGridEntity(trapdoorIdx, 0, false, true)
       Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, room:GetGridPosition(trapdoorIdx), true)
     end
     
@@ -108,6 +107,19 @@ function mod:onPlayerUpdate(player)
       if mod.timer > 0 then
         mod.timer = mod.timer - 1
       end
+    end
+  end
+end
+
+function mod:removeGridEntity(gridIdx, pathTrail, keepDecoration, update)
+  local room = game:GetRoom()
+  
+  if REPENTOGON then
+    room:RemoveGridEntityImmediate(gridIdx, pathTrail, keepDecoration)
+  else
+    room:RemoveGridEntity(gridIdx, pathTrail, keepDecoration)
+    if update then
+      room:Update()
     end
   end
 end
