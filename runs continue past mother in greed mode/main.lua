@@ -176,8 +176,8 @@ function mod:isMother()
          (stageType == StageType.STAGETYPE_REPENTANCE or stageType == StageType.STAGETYPE_REPENTANCE_B) and
          roomDesc.Data.Type == RoomType.ROOM_BOSS and
          roomDesc.Data.Shape == RoomShape.ROOMSHAPE_1x1 and
-         roomDesc.Data.Variant == 6000 and
-         roomDesc.Data.Name == 'Mother' and
+         roomDesc.Data.StageID == 0 and    -- special rooms
+         roomDesc.Data.Variant == 6000 and -- Mother
          roomDesc.GridIndex == GridRooms.ROOM_DEBUG_IDX
 end
 
