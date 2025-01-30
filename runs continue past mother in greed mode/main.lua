@@ -5,6 +5,12 @@ local game = Game()
 mod.cath = nil -- nil, false, true
 mod.timer = 0
 
+function mod:onGameStart()
+  mod:RemoveCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.onGameStart)
+  mod:doEnhancedBossBarsOverride()
+  mod:doUnlockKeyOverride()
+end
+
 function mod:onGameExit()
   mod.cath = nil
   mod.timer = 0
@@ -151,16 +157,35 @@ function mod:doEnhancedBossBarsOverride()
     return
   end
   
-  local ignoreMotherOld = HPBars.BossIgnoreList['912.0'] -- mother
+  local ignoreMotherOrig = HPBars.BossIgnoreList['912.0'] -- mother
   
-  if type(ignoreMotherOld) == 'function' then
+  if type(ignoreMotherOrig) == 'function' then
     HPBars.BossIgnoreList['912.0'] = function(entity)
       -- IsFinished lines up with dropping the chest, otherwise you can use GetAnimation
       if game:IsGreedMode() and entity:GetSprite():IsFinished('Death') then
         return true
       end
       
-      return ignoreMotherOld(entity)
+      return ignoreMotherOrig(entity)
+    end
+  end
+end
+
+-- stop the game from crashing (Mr. Unlocki's Key)
+function mod:doUnlockKeyOverride()
+  if not UnlockKey then
+    return
+  end
+  
+  local isMommyRoomOrig = UnlockKey.IsMommyRoom
+  
+  if type(isMommyRoomOrig) == 'function' then
+    UnlockKey.IsMommyRoom = function(s, t, r) -- self, type, room
+      if game:IsGreedMode() and t == 'Mother' then
+        return false
+      end
+      
+      return isMommyRoomOrig(s, t, r)
     end
   end
 end
@@ -185,9 +210,8 @@ function mod:isAnyChallenge()
   return Isaac.GetChallenge() ~= Challenge.CHALLENGE_NULL
 end
 
+mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.onGameStart)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, mod.onGameExit)
 mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.onNewRoom)
 mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, mod.onPickupInit, PickupVariant.PICKUP_BIGCHEST)
 mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, mod.onPlayerUpdate)
-
-mod:doEnhancedBossBarsOverride()
